@@ -7,7 +7,8 @@ const COLLECTIONS = {
     DRIVER_LOCATION: 'DriversLocation',
     DRIVERS: 'Drivers',
     OFFERS: 'OffersNotificationCenter',
-    NOTIFICATION_USER: 'NotificationsUsers'
+    NOTIFICATION_USER: 'NotificationsUsers',
+    HISTORY_OFFERS_NOTIFICATION_CENTER: 'HistoryOffersNotificationCenter'
 };
 
 // Estados del conductor

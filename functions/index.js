@@ -13,7 +13,7 @@ const { COLLECTIONS, DRIVER_STATUS } = require('./constants');
 /**
  * Se suscribe a la creación de un documento en la colección de Notificaciones
  */
-exports.sendNotifications = functions.firestore
+exports.onNewService = functions.firestore
     .document(`${COLLECTIONS.NOTIFICATION_USER}/{userId}`)
     .onCreate((snap) => {
 
@@ -51,6 +51,33 @@ exports.sendNotifications = functions.firestore
                 }
             })
         });
+    });
+
+/**
+ * Se suscribe a la creación de un documento en la colección de Histórico de
+ * ofertas aceptadas
+ */
+exports.onAcceptService = functions.firestore
+    .document(`${COLLECTIONS.HISTORY_OFFERS_NOTIFICATION_CENTER}/{userId}`)
+    .onUpdate((snap) => {
+
+        // Obtiene datos de la oferta aceptada por el usuario
+        const offer = snap.data();
+
+        // Evalua el identificador del conductor de la oferta
+        if (!offer.driverId) { return false; }
+
+        // Busca el conductor que este activo por su identificador
+        db.findById(COLLECTIONS.DRIVERS, offer.driverId)
+            .then(doc => {
+                const driver = doc.data();
+                if (!driver || !driver.pushToken) { return false; }
+                const notification = {
+                    body: `El viaje de ${offer.currentCity} a ${offer.destinationCity} ha sido aceptado`
+                }
+                notifications.send(driver.pushToken, notification);
+            });
+
     });
 
 // TODO: nfv => Para Probar
